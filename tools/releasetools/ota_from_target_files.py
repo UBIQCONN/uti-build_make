@@ -877,6 +877,7 @@ endif;
   needed_property_files = (
       NonAbOtaPropertyFiles(),
   )
+  UbiqconnOtaMetadata(metadata, target_info, None)
   FinalizeMetadata(metadata, staging_file, output_file, needed_property_files)
 
 
@@ -1613,6 +1614,7 @@ endif;
   needed_property_files = (
       NonAbOtaPropertyFiles(),
   )
+  UbiqconnOtaMetadata(metadata, target_info, source_info)
   FinalizeMetadata(metadata, staging_file, output_file, needed_property_files)
 
 
@@ -1929,6 +1931,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
       AbOtaPropertyFiles(),
       StreamingPropertyFiles(),
   )
+  UbiqconnOtaMetadata(metadata, target_info, source_info)
   FinalizeMetadata(metadata, staging_file, output_file, needed_property_files)
 
 
@@ -2029,6 +2032,15 @@ def CalculateRuntimeDevicesAndFingerprints(build_info, boot_variable_values):
     fingerprints.add(new_build_info.fingerprint)
   return device_names, fingerprints
 
+
+def UbiqconnOtaMetadata(metadata, target_info, source_info):
+  if source_info is not None:
+    metadata["pre-timestamp"] = source_info.GetBuildProp("ro.build.date.utc")
+  metadata["ro.build.date.num"] = target_info.GetBuildProp("ro.build.version.incremental") + '.' + target_info.GetBuildProp("ro.build.date.utc")
+  metadata["ro.product.brand"] = target_info.GetBuildProp("ro.product.brand")
+  metadata["ro.product.model"] = target_info.GetBuildProp("ro.product.model")
+  metadata["ro.product.name"] = target_info.GetBuildProp("ro.product.name")
+  metadata["ro.product.device"] = target_info.GetBuildProp("ro.product.device")
 
 def main(argv):
 
